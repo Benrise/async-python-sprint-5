@@ -1,3 +1,4 @@
+import aiofiles
 import re
 
 from pathlib import Path
@@ -28,13 +29,17 @@ def get_upload_directory(file: UploadFile, base_path: str) -> str:
 
 
 async def save_file(file: UploadFile, base_path: str) -> str:
+    content = await file.read()
+    
     sanitized_filename = sanitize_filename(file.filename)
     upload_dir = get_upload_directory(file, base_path)
     
+    if len(content) == 0:
+        raise Exception("File content is empty")
+
     path = Path(upload_dir) / sanitized_filename
     
-    with open(path, "wb") as f:
-        content = await file.read()
-        f.write(content)
+    async with aiofiles.open(path, "wb") as f:
+        await f.write(content)
     
-    return str(path)
+    return str(path), len(content)

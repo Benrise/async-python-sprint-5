@@ -2,8 +2,10 @@ import uuid
 
 from sqlalchemy import Column, String, Integer, Boolean, DateTime, text
 from sqlalchemy.sql import func
+from sqlalchemy.orm import validates
 from sqlalchemy.dialects.postgresql import UUID
 
+from .utils import sanitize_filename
 from ..models import Base
 
 
@@ -16,3 +18,8 @@ class File(Base):
     path = Column(String, nullable=False)
     size = Column(Integer, nullable=False)
     is_downloadable = Column(Boolean, default=True)
+
+    @validates('name')
+    def validate_name(self, _, value):
+        sanitized = sanitize_filename(value)
+        return sanitized
