@@ -9,6 +9,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 logging_config.dictConfig(LOGGING)
 
+
 class Settings(BaseSettings):
     project_name: str = Field(..., alias="BACKEND_PROJECT_NAME")
     service_host: str = Field(..., alias="BACKEND_HOST")
@@ -21,6 +22,7 @@ class Settings(BaseSettings):
         return f"http://{'127.0.0.1' if self.is_debug else self.service_host}:{self.service_port}"
     
 settings = Settings()
+
 
 class PostgresSettings(BaseSettings):
     db: str = Field(..., alias='DB_NAME')
@@ -37,5 +39,11 @@ class PostgresSettings(BaseSettings):
     def sync_dsn(self) -> str:
         return f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.db}"
 
+pg_settings = PostgresSettings()
 
-pg = PostgresSettings()
+
+class RedisSettings(BaseSettings):
+    redis_host: str = Field(..., alias='REDIS_HOST')
+    redis_port: int = Field(..., alias='REDIS_PORT')
+    
+redis_settings = RedisSettings()

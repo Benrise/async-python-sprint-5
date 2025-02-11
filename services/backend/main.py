@@ -1,25 +1,35 @@
 import uvicorn
 import logging
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.responses import ORJSONResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from redis.asyncio import Redis
 
 from src.logger import LOGGING
-from src.config import settings
+from src.config import settings, redis_settings
 from db.postgres import get_async_session
+from db import redis
 from src.url.models import URL, URLAccess
 from src.health import router as health
 from src.url import router as url
 from middlewares.blocked_ip import BlockedIPMiddleware
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    redis.redis = Redis(host=redis_settings.redis_host, port=redis_settings.redis_port)
+    yield
+    await redis.redis.close()
+
 app = FastAPI(
     title=settings.project_name,
     default_response_class=ORJSONResponse,
     docs_url="/api/v1/docs",
     openapi_url="/api/v1/docs.json",
+    lifespan=lifespan
 )
 
 app.include_router(health.router)
