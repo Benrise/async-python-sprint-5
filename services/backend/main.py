@@ -13,8 +13,9 @@ from src.config import settings, redis_settings
 from db.postgres import get_async_session
 from db import redis
 from src.url.models import URL, URLAccess
-from src.health import router as health
-from src.url import router as url
+from src.health.router import router as health_router
+from src.url.router import router as url_router
+from src.files.router import router as files_router
 from middlewares.blocked_ip import BlockedIPMiddleware
 
 
@@ -32,8 +33,9 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-app.include_router(health.router)
-app.include_router(url.router)
+app.include_router(health_router)
+app.include_router(url_router)
+app.include_router(files_router)
 
 app.add_middleware(
     CORSMiddleware,

@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     service_host: str = Field(..., alias="BACKEND_HOST")
     service_port: int = Field(..., alias="BACKEND_PORT")
     is_debug: bool = Field(..., alias="BACKEND_DEBUG")
+    media_path: str = Field(..., alias="BACKEND_MEDIA_PATH")
     blocked_ips: list[str] = []
     
     @property    

@@ -12,3 +12,4 @@ psycopg2-binary==2.9.9
 SQLAlchemy==2.0.30
 SQLAlchemy-Utils==0.41.2
 redis==5.0.4
+python-multipart==0.0.20

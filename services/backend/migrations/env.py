@@ -9,6 +9,8 @@ from alembic import context
 
 from src.config import pg_settings
 from src.models import Base
+from src.url.models import URL, URLAccess
+from src.files.models import File
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
