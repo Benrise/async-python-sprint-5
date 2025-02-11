@@ -4,9 +4,9 @@ from sqlalchemy.future import select
 from sqlalchemy import desc, func
 
 from db.postgres import get_async_session
-from utils.short_id import generate_short_id
-from models.url import URL, URLAccess
-from schemas.url import (
+from .utils import generate_short_id
+from .models import URL, URLAccess
+from .schemas import (
     URLCreateRequest, 
     URLCreateResponse, 
     URLStatusResponse, 
@@ -17,6 +17,7 @@ from schemas.url import (
     URLBatchCreateResponse
 )
 from core.config import settings
+
 
 router = APIRouter(prefix="/url", tags=["URL"])
 

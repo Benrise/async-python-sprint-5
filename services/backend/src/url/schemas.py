@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import List, Optional
 
-from models.enums import VisibilityEnum
+from .enums import VisibilityEnum
 
 
 class URLCreateRequest(BaseModel):

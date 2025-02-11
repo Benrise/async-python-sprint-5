@@ -6,12 +6,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from db.postgres import get_async_session
-from models.url import URL, URLAccess
 from core.logger import LOGGING
 from core.config import settings
-from api.v1 import health
-from api.v1 import url
+from db.postgres import get_async_session
+from src.url.models import URL, URLAccess
+from src.health import router as health
+from src.url import router as url
 from middlewares.blocked_ip import BlockedIPMiddleware
 
 
