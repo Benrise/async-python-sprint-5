@@ -6,8 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from core.logger import LOGGING
-from core.config import settings
+from src.logger import LOGGING
+from src.config import settings
 from db.postgres import get_async_session
 from src.url.models import URL, URLAccess
 from src.health import router as health

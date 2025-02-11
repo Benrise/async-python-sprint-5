@@ -1,11 +1,9 @@
 from sqlalchemy import Column, Integer, String, DateTime, Boolean, Text, Enum, ForeignKey
-from sqlalchemy.orm import relationship, declarative_base
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
+from ..models import Base
 from .enums import VisibilityEnum
-
-Base = declarative_base()
-
 
 class URL(Base):
     __tablename__ = "url"

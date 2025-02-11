@@ -2,7 +2,7 @@ from typing import Union
 
 from fastapi import Depends
 from redis.asyncio import Redis
-from utils.abstract import AsyncCacheStorage
+from src.abstract import AsyncCacheStorage
 
 redis: Union[Redis, None] = None
 

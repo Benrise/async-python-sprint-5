@@ -16,7 +16,7 @@ from .schemas import (
     URLBatchCreateRequest,
     URLBatchCreateResponse
 )
-from core.config import settings
+from ..config import settings
 
 
 router = APIRouter(prefix="/url", tags=["URL"])
