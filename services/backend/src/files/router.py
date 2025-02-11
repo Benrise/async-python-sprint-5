@@ -10,19 +10,18 @@ from sqlalchemy.orm import Session
 from .models import File as FileModel
 from .schemas import FileResponse
 from .utils import save_file
-from ..config import settings
 from db.postgres import get_async_session
 
 router = APIRouter(prefix="/files", tags=["Files"])
 
 
 @router.post("/upload", response_model=FileResponse)
-async def upload_file(file: UploadFile = File(...), db: Session = Depends(get_async_session)):
-    path, size = await save_file(file, settings.media_path)
+async def upload_file(file: UploadFile = File(...), path: str = None, db: Session = Depends(get_async_session)):
+    file_path, size = await save_file(file, path)
 
     new_file = FileModel(
         name=file.filename,
-        path=path,
+        path=file_path,
         size=size,
         is_downloadable=True
     )
@@ -43,22 +42,33 @@ async def upload_file(file: UploadFile = File(...), db: Session = Depends(get_as
 
 
 @router.get("/download")
-async def download_file(file_id: str, db: Session = Depends(get_async_session)):
-    result = await db.execute(select(FileModel).filter(FileModel.id == UUID(file_id)))
-    file = result.scalars().first()
+async def download_file(path: str = None, file_id: str = None, db: Session = Depends(get_async_session)):
+    if not path and not file_id:
+        raise HTTPException(status_code=400, detail="Either 'path' or 'file_id' must be provided")
 
-    if not file:
-        raise HTTPException(status_code=404, detail="File not found")
+    file = None
 
-    file_path = file.path
+    if file_id:
+        result = await db.execute(select(FileModel).filter(FileModel.id == UUID(file_id)))
+        file = result.scalars().first()
+
+        if not file:
+            raise HTTPException(status_code=404, detail="File not found")
+
+        file_path = file.path
+    elif path:
+        file_path = path
+        if not os.path.exists(file_path):
+            raise HTTPException(status_code=404, detail="File not found on server")
+        
     if not os.path.exists(file_path):
         raise HTTPException(status_code=404, detail="File not found on server")
-    
+
     print(f"Sending file: {file_path}")
     
     return FastAPIFileResponse(
         path=file_path,
-        filename=file.name,
+        filename=file.name if file else os.path.basename(file_path),
         media_type="application/octet-stream",
     )
     
