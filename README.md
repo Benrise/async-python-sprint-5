@@ -30,6 +30,9 @@
     ```
    </details>
 
+   ![image](https://github.com/user-attachments/assets/0233a938-4107-4c72-b258-df2cb831fbbb)
+
+
 
 2. Регистрация пользователя.
 
