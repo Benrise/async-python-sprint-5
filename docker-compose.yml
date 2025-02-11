@@ -1,8 +1,7 @@
 services:
   backend:
     container_name: backend
-    build: 
-      context: ./services/backend
+    build: ./services/backend
     volumes:
       - ./services/backend:/app
     env_file:
@@ -14,8 +13,7 @@ services:
       - "8080:8080"
   db:
     container_name: db
-    build: 
-      context: ./services/db
+    build: ./services/db
     ports:
       - "${DB_PORT}:${DB_PORT}"
     env_file:
@@ -32,10 +30,24 @@ services:
       timeout: 5s
       retries: 5
 
-    nginx:
-      container_name: "nginx"
+    redis:
+      container_name: redis
+      build: ./services/redis
+      volumes: 
+        - ./services/redis/data:/data
       restart: always
+      healthcheck:
+        test: ["CMD", "redis-cli", "ping"]
+        timeout: 10s
+        retries: 5
+        start_period: 10s
+      ports:
+        - ${REDIS_PORTS}
+
+    nginx:
+      container_name: nginx
       build: ./services/nginx
+      restart: always
       volumes:
         - ./services/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
         - ./services/nginx/configs:/etc/nginx/conf.d:ro
