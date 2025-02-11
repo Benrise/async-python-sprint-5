@@ -1,3 +1,5 @@
+import time
+
 from fastapi import APIRouter, Depends
 from datetime import datetime
 
@@ -8,53 +10,36 @@ from sqlalchemy.future import select
 
 router = APIRouter(prefix="/health", tags=["Health"])
 
-@router.get("/app", summary="Check App availability")
-async def health_check() -> dict:
-    """Проверка доступности приложения"""
-    return {
-        "status": "healthy",
-        "timestamp": datetime.now().isoformat(),
-    }
+@router.get("/", summary="Check the availability of services")
+async def health_check(cache: AsyncCacheStorage = Depends(get_cache)) -> dict:
+    """Проверка доступности приложения, БД и кэша с выводом времени выполнения каждой операции"""
 
-@router.get("/db", summary="Check DB availability")
-async def ping() -> dict:
-    """Проверка доступности БД"""
+    result = {}
+
+    start_time = time.time()
+    result["app"] = {"status": "healthy", "timestamp": datetime.now().isoformat(), "time_ms": (time.time() - start_time) * 1000}
+    
     try:
+        start_time = time.time()
         async with async_engine.begin() as conn:
             await conn.execute(select(1)) 
-        return {
-                "status": "ok",
-                "timestamp": datetime.now().isoformat(),
-            }
+        result["db"] = {"status": "ok", "timestamp": datetime.now().isoformat(), "time_ms": (time.time() - start_time) * 1000}
     except Exception as e:
-        return {
-                "status": "error", 
-                "details": str(e),
-                "timestamp": datetime.now().isoformat(),
-            }
-        
-@router.get("/cache", summary="Check Cache availability")
-async def ping(cache: AsyncCacheStorage = Depends(get_cache)) -> dict:
-    """Проверка доступности кэша"""
+        result["db"] = {"status": "error", "details": str(e), "timestamp": datetime.now().isoformat(), "time_ms": (time.time() - start_time) * 1000}
+    
     try:
+        start_time = time.time()
         test_key = "health_check"
         test_value = "ok"
         test_expire = 999
-        
         await cache.set(test_key, test_value, test_expire)
-        result = await cache.get(test_key)
-        
-        if result.decode("utf-8") == test_value:
-            return {
-                "status": "ok",
-                "timestamp": datetime.now().isoformat(),
-            }
+        result_cache = await cache.get(test_key)
+
+        if result_cache.decode("utf-8") == test_value:
+            result["cache"] = {"status": "ok", "timestamp": datetime.now().isoformat(), "time_ms": (time.time() - start_time) * 1000}
         else:
             raise Exception("Cache value is incorrect")
-        
     except Exception as e:
-        return {
-            "status": "error",
-            "details": str(e),
-            "timestamp": datetime.now().isoformat(),
-        }
+        result["cache"] = {"status": "error", "details": str(e), "timestamp": datetime.now().isoformat(), "time_ms": (time.time() - start_time) * 1000}
+
+    return result
