@@ -93,6 +93,9 @@
     }
     ```
     </details>
+    
+    ![image](https://github.com/user-attachments/assets/5d9850d1-c8c8-4dfc-a7c8-e4e4df824b15)
+
 
 
 5. Загрузить файл в хранилище.
@@ -126,6 +129,9 @@
     }
     ```
     </details>
+    
+    ![image](https://github.com/user-attachments/assets/d34c22ea-0c20-42c7-aa37-d71cb1c47d07)
+
 
 
 6. Скачать загруженный файл.
@@ -144,6 +150,10 @@
     ```
     Возможность скачивания есть как по переданному пути до файла, так и по идентификатору.
     </details>
+
+    ![image](https://github.com/user-attachments/assets/a3e72624-dc9d-4790-b48c-c689268b3b58)
+
+
 
 </details>
 
