@@ -59,6 +59,26 @@
 
     </details>
 
+### Авторизация и регистрация происходит через библиотеку [Fief]().
+
+![image](https://github.com/user-attachments/assets/5d04bc83-a208-4d03-aa5b-b250a5224e44)
+
+
+**Для корректной работы необходимо добавить Redirect URI в таблицу возможных клиентов Fief**
+
+![image](https://github.com/user-attachments/assets/e0005246-0a0e-45d2-973d-449ad9bf5958)
+
+Чтобы получить доступ к защищенным роутам и проверить их работоспобность, необходимо авторизоваться в клиенте Swagger.
+![image](https://github.com/user-attachments/assets/15488fc8-9c12-4e72-9082-46b9f1e47b90)
+
+*При первом холодном запуске необходимо также применить все миграции Alembic `alembic upgrade head` в контейнере backend*
+
+Пример успешной авторизации:
+![image](https://github.com/user-attachments/assets/a05e5a82-bbb4-42da-a84f-30b056ac323e)
+
+> В качестве OAuth2 провайдера выступает сам Fief, поэтому, чтобы авторизация прошла, предварительно нужно зайти в учетную запись Fief по адресу `http://localhost:8000/login`
+
+> Дашборд станет доступен после авторизации по адресу `http://localhost:8000/admin`
 
 4. Информация о загруженных файлах.
 
