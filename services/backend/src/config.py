@@ -43,6 +43,24 @@ class PostgresSettings(BaseSettings):
 pg_settings = PostgresSettings()
 
 
+class FiefSettings(BaseSettings):
+    client_id: str = Field(..., alias='FIEF_CLIENT_ID')
+    client_secret: str = Field(..., alias='FIEF_CLIENT_SECRET')
+    domain: str = Field(..., alias='FIEF_DOMAIN')
+    host: str = Field(..., alias='FIEF_HOST')
+    port: int = Field(..., alias='FIEF_PORT')
+    
+    @property
+    def base_url(self) -> str:
+        return f"http://{self.host}:{self.port}"
+    
+    @property
+    def domain_url(self) -> str:
+       return f"http://{self.domain}" 
+    
+fief_settings = FiefSettings()
+
+
 class RedisSettings(BaseSettings):
     redis_host: str = Field(..., alias='REDIS_HOST')
     redis_port: int = Field(..., alias='REDIS_PORT')

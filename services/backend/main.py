@@ -7,9 +7,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from redis.asyncio import Redis
+from fief_client  import FiefAsync
+from fief_client.integrations.fastapi import FiefAuth
+from fastapi.security import OAuth2AuthorizationCodeBearer
 
 from src.logger import LOGGING
-from src.config import settings, redis_settings
+from src.config import settings, redis_settings, fief_settings
 from db.postgres import get_async_session
 from db import redis
 from src.url.models import URL, URLAccess
@@ -25,6 +28,16 @@ async def lifespan(app: FastAPI):
     yield
     await redis.redis.close()
 
+
+fief = FiefAsync(fief_settings.base_url, fief_settings.client_id, fief_settings.client_secret)
+scheme = OAuth2AuthorizationCodeBearer(  
+    f"{fief_settings.domain_url}/authorize",  
+    f"{fief_settings.domain_url}/api/token",  
+    scopes={"openid": "openid", "offline_access": "offline_access"},
+    auto_error=False,  
+)
+auth = FiefAuth(fief, scheme)
+
 app = FastAPI(
     title=settings.project_name,
     default_response_class=ORJSONResponse,
@@ -35,7 +48,7 @@ app = FastAPI(
 
 app.include_router(health_router)
 app.include_router(url_router)
-app.include_router(files_router)
+app.include_router(files_router, dependencies=[Depends(auth.authenticated())])
 
 app.add_middleware(
     CORSMiddleware,
