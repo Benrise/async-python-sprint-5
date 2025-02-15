@@ -54,3 +54,12 @@ services:
       - ./services/nginx/logs:/var/log/nginx/
     ports:
       - ${NGINX_PORTS}
+
+  fief:
+    image: ghcr.io/fief-dev/fief:0.29.2
+    container_name: fief
+    env_file:
+      - .env
+    ports:
+      - ${FIEF_PORTS}
+    restart: always

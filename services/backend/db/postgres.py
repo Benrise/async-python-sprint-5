@@ -1,9 +1,9 @@
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 
-from src.config import pg_settings
+from src.config import pg_settings, settings
 
-async_engine = create_async_engine(pg_settings.async_dsn, echo=True, future=True)
+async_engine = create_async_engine(pg_settings.async_dsn, echo=settings.is_debug, future=True)
 async_session = sessionmaker(
     async_engine, class_=AsyncSession, expire_on_commit=False
 ) 

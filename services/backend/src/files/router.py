@@ -7,6 +7,7 @@ from fastapi.responses import FileResponse as FastAPIFileResponse
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
 
+from src.logger import logger
 from .models import File as FileModel
 from .schemas import FileResponse
 from .utils import save_file
@@ -64,7 +65,7 @@ async def download_file(path: str = None, file_id: str = None, db: Session = Dep
     if not os.path.exists(file_path):
         raise HTTPException(status_code=404, detail="File not found on server")
 
-    print(f"Sending file: {file_path}")
+    logger.info(f"Sending file: {file_path}")
     
     return FastAPIFileResponse(
         path=file_path,

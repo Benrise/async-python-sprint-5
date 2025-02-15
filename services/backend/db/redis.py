@@ -1,10 +1,8 @@
-from typing import Union
-
 from fastapi import Depends
 from redis.asyncio import Redis
 from src.abstract import AsyncCacheStorage
 
-redis: Union[Redis, None] = None
+redis: Redis | Redis = None
 
 
 class RedisCacheAdapter(AsyncCacheStorage):
